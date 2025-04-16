@@ -181,14 +181,14 @@ def advanced_syn_scan(target_ip, target_ports, source_ip=None, timeout=DEFAULT_T
                 decoy_pkt = IP(src=decoy_ip, dst=target_ip, ttl=random.randint(MIN_TTL, MAX_TTL)) / \
                             TCP(sport=decoy_sport, dport=target_port, flags="S", window=random.randint(MIN_WINDOW_SIZE, MAX_WINDOW_SIZE))
                 # Send decoy without waiting for reply
-                send(decoy_pkt, verbose=VERBOSE_SCAPY_SEND_RECV, iface=conf.iface)
+                send(decoy_pkt, verbose=VERBOSE_SCAPY_SEND_RECV)
                 # Optional small delay between decoys?
                 # time.sleep(random.uniform(0.01, 0.05))
             print(f"[*]   Decoys sent.")
 
         # --- Send Real Packet & Receive ---
         try:
-            response = sr1(real_packet, timeout=timeout, verbose=VERBOSE_SCAPY_SEND_RECV, iface=conf.iface)
+            response = sr1(real_packet, timeout=timeout, verbose=VERBOSE_SCAPY_SEND_RECV)
 
             # --- Analyze Response ---
             # (Analysis logic remains largely the same as v2)
@@ -205,7 +205,7 @@ def advanced_syn_scan(target_ip, target_ports, source_ip=None, timeout=DEFAULT_T
                         print(f"[*]   Sending RST to {target_ip}:{target_port}...")
                         rst_ip = IP(dst=target_ip, src=actual_source_ip)
                         rst_tcp = TCP(sport=real_source_port, dport=target_port, flags="R", seq=received_tcp.ack)
-                        send(rst_ip / rst_tcp, verbose=VERBOSE_SCAPY_SEND_RECV, iface=conf.iface)
+                        send(rst_ip / rst_tcp, verbose=VERBOSE_SCAPY_SEND_RECV)
                 elif received_tcp.flags == 0x14:  # RST/ACK
                     print(f"[-] Port {target_port}: CLOSED (Received RST/ACK).")
                     closed_ports.append(target_port)
